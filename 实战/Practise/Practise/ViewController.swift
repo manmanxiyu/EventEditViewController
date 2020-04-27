@@ -14,23 +14,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
-
-    enum LYKXCellInputContentType {
-         case Event
-         case Remark
-     }
-    enum LUKXEditCellType {
-        case TextInput
-        case TimeDisplay
-        case TimePicker
-        case TextView
-    }
-    let LYKXCellDefaultHeight : CGFloat = 44.0
-    let LYKXTimePickerCellHeight : CGFloat = 215.0
-    let LYKXTextViewCellHeight : CGFloat = 180.0
-    let LYKXCellTypeKey = "CellType"
-    let LYKXCellHeightKey = "CellHeight"
-    let LYKXCellInputContentTypeKey = "CellInputContentType"
+    
     @IBAction func addNewEvent(_ sender: UIBarButtonItem) {
         let vc = LYKXEventEditViewController()
         self.navigationController?.present(UINavigationController(rootViewController: vc),animated: true,completion: {

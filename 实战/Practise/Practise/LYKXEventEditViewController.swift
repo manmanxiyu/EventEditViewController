@@ -8,13 +8,31 @@
 
 import UIKit
 
+public let LYKXCellDefaultHeight : CGFloat = 44.0
+let LYKXTimePickerCellHeight : CGFloat = 215.0
+let LYKXTextViewCellHeight : CGFloat = 180.0
+let LYKXCellTypeKey = "CellType"
+let LYKXCellHeightKey = "CellHeight"
+let LYKXCellInputContentTypeKey = "CellInputContentType"
+
+enum LYKXCellInputContentType {
+     case Event
+     case Remark
+ }
+enum LYKXEditCellType {
+    case TextInput
+    case TimeDisplay
+    case TimePicker
+    case TextView
+}
+
 class LYKXEventEditViewController: UIViewController,UITableViewDelegate,UITableViewDataSource {
     var editCellConfig : Array<Array<Dictionary<String,Any>>> = [
     [
         [LYKXCellTypeKey:LYKXEditCellType.TextInput,
          LYKXCellInputContentTypeKey:LYKXCellInputContentType.Event,
          LYKXCellHeightKey:LYKXCellDefaultHeight],
-        [LYKXCellTypeKey:LYXKEditCellType.TimeDisplay,
+        [LYKXCellTypeKey:LYKXEditCellType.TimeDisplay,
          LYKXCellHeightKey:LYKXCellDefaultHeight,],
         ],
     [
@@ -29,14 +47,14 @@ class LYKXEventEditViewController: UIViewController,UITableViewDelegate,UITableV
         super.viewDidLoad()
         editTableView.delegate = self
         editTableView.dataSource = self
-        editTableView.register(UINib(nibName: "LYKXTextInputTableViewCell", bundle: Bundle.main), for CellReuseIdentifier:"LYKXTextInputTableViewCell")
-        editTableView.register(UINib(nibName: "LYKXTimeDisplayTableViewCell", bundle: Bundle.main), for CellReuseIdentifier:"LYKXTimeDisplayTableViewCell")
-        editTableView.register(UINib(nibName: "LYKXTimePickerTableViewCell", bundle: Bundle.main), for CellReuseIdentifier:"LYKXTimePickerTableViewCell")
-        editTableView.register(UINib(nibName: "LYKXTextTableViewCell", bundle: Bundle.main), for CellReuseIdentifier:"LYKXTextTableViewCell")
+        editTableView.register(UINib(nibName: "LYKXTextInputTableViewCell", bundle: Bundle.main), forCellReuseIdentifier:"LYKXTextInputTableViewCell")
+        editTableView.register(UINib(nibName: "LYKXTimeDisplayTableViewCell", bundle: Bundle.main), forCellReuseIdentifier:"LYKXTimeDisplayTableViewCell")
+        editTableView.register(UINib(nibName: "LYKXTimePickerTableViewCell", bundle: Bundle.main), forCellReuseIdentifier:"LYKXTimePickerTableViewCell")
+        editTableView.register(UINib(nibName: "LYKXTextViewTableViewCell", bundle: Bundle.main), forCellReuseIdentifier:"LYKXTextViewTableViewCell")
         // Do any additional setup after loading the view.
     }
     func numberOfSections(in tableView: UITableView) -> Int {
-        return editCellConfig.count
+        return 2// editCellConfig.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -44,31 +62,36 @@ class LYKXEventEditViewController: UIViewController,UITableViewDelegate,UITableV
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let config = configDictionary(indexPath:indexPath)
-        if config![LYKXCellHeightKey]! = nil {
-            return config![LYKXCellHeightKey] as! CGFloat
+        let config = configDictionary(indexPath:indexPath)!
+        if config[LYKXCellHeightKey] == nil {
+            return config[LYKXCellHeightKey] as! CGFloat
         }
         return 0.0
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let config = configDictionary(indexPath:indexPath)
-        var cell : UITableViewCell?
-        switch config![LYKXCellTypeKey] as！LYKXEditCellType {
-            case .TextInput:
-            let textInputCell:LYKXTextInputTableViewCell = tableView.dequeueReusableCell(withIdentifier: "LYKXTextInputTableViewCell") as! LYKXTextInputTableViewCell
-            cell = textInputCell
-            case .TimeDisplay:
-            let timeDisplayCell:LYKXTimeDisplayTableViewCell = tableView.dequeueReusableCell(withIdentifier: "LYKXTimeDisplayTableViewCell") as! LYKXTimeDisplayTableViewCell
-            cell = timeDisplayCell
-            case .TimePicker:
-            let timePickerCell:LYKXTimePickerTableViewCell = tableView.dequeueReusableCell(withIdentifier: "LYKXTimePickerTableViewCell") as! LYKXTimePickerTableViewCell
-            cell = timePickerCell
-            case .TextView:
-            let textViewCell:LYKXTextViewTableViewCell = tableView.dequeueReusableCell(withIdentifier: "LYKXTextViewTableViewCell") as! LYKXTextViewTableViewCell
-            cell = textViewCell
+      var cell : UITableViewCell
+      if let config = configDictionary(indexPath:indexPath) {
+        if let cellType = config[LYKXCellTypeKey] as? LYKXEditCellType {
+          switch cellType {
+              case .TextInput:
+              let textInputCell:LYKXTextInputTableViewCell = tableView.dequeueReusableCell(withIdentifier: "LYKXTextInputTableViewCell") as! LYKXTextInputTableViewCell
+              cell = textInputCell
+              case .TimeDisplay:
+              let timeDisplayCell:LYKXTimeDisplayTableViewCell = tableView.dequeueReusableCell(withIdentifier: "LYKXTimeDisplayTableViewCell") as! LYKXTimeDisplayTableViewCell
+              cell = timeDisplayCell
+              case .TimePicker:
+              let timePickerCell:LYKXTimePickerTableViewCell = tableView.dequeueReusableCell(withIdentifier: "LYKXTimePickerTableViewCell") as! LYKXTimePickerTableViewCell
+              cell = timePickerCell
+              case .TextView:
+              let textViewCell:LYKXTextViewTableViewCell = tableView.dequeueReusableCell(withIdentifier: "LYKXTextViewTableViewCell") as! LYKXTextViewTableViewCell
+              cell = textViewCell
+          }
+          return cell;
         }
-        return cell!
+      }
+      return UITableViewCell.init()
     }
+  
     func configDictionary(indexPath:IndexPath) -> Dictionary<String,Any>? {
         if indexPath.section > editCellConfig.count - 1 {
             return nil
