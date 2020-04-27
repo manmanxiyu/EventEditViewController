@@ -54,7 +54,7 @@ class LYKXEventEditViewController: UIViewController,UITableViewDelegate,UITableV
         // Do any additional setup after loading the view.
     }
     func numberOfSections(in tableView: UITableView) -> Int {
-        return editCellConfig.count
+        return 2// editCellConfig.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
