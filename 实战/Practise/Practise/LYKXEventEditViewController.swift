@@ -63,7 +63,7 @@ class LYKXEventEditViewController: UIViewController,UITableViewDelegate,UITableV
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let config = configDictionary(indexPath:indexPath)!
-        if config[LYKXCellHeightKey] == nil {
+        if config[LYKXCellHeightKey] != nil {
             return config[LYKXCellHeightKey] as! CGFloat
         }
         return 0.0
